@@ -1,6 +1,6 @@
 # Zoom.Module_Autopsy.Plugin
 This ingest module used to decrypt Zoom database and process Zoom artifacts.
-##the project has two scripts:
+## the project has two scripts:
 
 •	The first tool for retrieving the keys called zoom_keys.py.
 The remote key part was based by the following tool 
