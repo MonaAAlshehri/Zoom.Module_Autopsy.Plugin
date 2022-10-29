@@ -2,12 +2,31 @@
 This ingest module used to decrypt Zoom database and process Zoom artifacts.
 
 ## the project has two scripts:
+### 1. Zoom_key.py
+### -------------
 •	The first tool for retrieving the keys called zoom_keys.py.
 The remote key part was based by the following tool 
 script used code written by” Alba Mendez” https://github.com/mildsunrise/protobuf-inspector.git . 
 To run, with Python 3.7 is needed with the following Python modules installed: dpapick3, Crypto, pathlib, blackboxprotobuf, configparser, hashlib, os,requests, sys, urllib.
+#### Local Key:
 
-•	The second tool in the repository composes the add-on modules. Downloading and placing it in the appropriate directory is all that's needed (the ingest module that run on Autopsy Version 4.18.0).
+`local  <Microsoft/Protect/SID folder> <Zoom.us.ini> <optional windows password>`
+
+zoom_keys.py is the first tool that retrieve the users' local keys using python 3.7. DPAPIck3 library, will be used to retrieve the local key, allowing offline decryption of DPAPI structures, regardless the type of the zoom account (e.g. SSO,Google or Basic). Investigators must pass `SID folder` from Active directory and `Zoom.us.ini` as the main inputs to fetch the local Key. 
+
+#### Remote Key:
+
+`remote [ basic/sso/google] <zoom login> <zoom password>` 
+
+the code will re-login into zoom.us/login to get the HTTP response `resp`, then the HTTP response will be decoded using `blackboxprotobuf.decode\_`message(resp)  function, which allow us to get the specific part that related to the remote key and user information. 
+
+		resp\_decoded = blackboxprotobuf.decode\_message(resp)[0] 
+
+		remote\_key = resp\_decoded['5']['95'].decode("utf-8")
+
+### 2.Add-On Module:  Zoom Module  
+The second tool in the repository composes the add-on modules. Downloading and placing it in the appropriate directory is all that's needed (the ingest module that run on Autopsy Version 4.18.0).
+
 
 ## Experimental Environment:
 This study is based on Windows 10 operating system environments which use VMware virtual machine software on PCs. Each of the virtual machines is equipped with 64-bit Windows 10 industrial version, both in 64-bit and 32-bit versions. Later, Zoom version 5.7.4 was installed to enable zoom features directly in the application. Table 1 illustrates the software listed above.
@@ -17,6 +36,8 @@ This study is based on Windows 10 operating system environments which use VMware
 | VMware® Workstation 16 Pro | Version 16.1.2 build-17966106  |
 | Windows 10 | Windows 10 Pro, 64-bit (Build 19042.1165)|
 | Zoom Application  | Version 5.7.4 (804)|
+
+
 
 ## Artifacts:
 for each artifact type a SQL Query generated to fetch the interested attributes’ contents from relevant database. 
